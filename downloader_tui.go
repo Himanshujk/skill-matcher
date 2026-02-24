@@ -1,3 +1,6 @@
+// Package main provides a terminal user interface for downloading large files
+// with real-time progress tracking. Built with Bubble Tea framework to show
+// download progress, speed, and ETA in a user-friendly format.
 package main
 
 import (
@@ -14,36 +17,46 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// Message types for Bubble Tea communication between download goroutine and UI
+// progressMsg carries current download progress for UI updates
 type progressMsg struct {
-	downloaded int64
-	total      int64
+	downloaded int64 // Bytes downloaded so far
+	total      int64 // Total file size in bytes
 }
 
+// finishedMsg signals download completion (success or failure)
 type finishedMsg struct {
-	err error
+	err error // nil if successful, error details if failed
 }
 
+// Global variables for thread-safe communication between download and UI goroutines
 var (
-	globalDownloaded int64
-	globalTotal      int64
-	downloadDone     int32
-	downloadError    error
+	globalDownloaded int64 // Atomic counter for bytes downloaded
+	globalTotal      int64 // Atomic counter for total file size
+	downloadDone     int32 // Atomic flag: 0=downloading, 1=done
+	downloadError    error // Error state (if any)
 )
 
+// downloadModel represents the TUI state for the download progress screen.
+// It tracks progress, timing, and visual components for the download interface.
 type downloadModel struct {
-	progress   progress.Model
-	downloaded int64
-	total      int64
-	startTime  time.Time
-	ctx        context.Context
-	cancel     context.CancelFunc
-	done       bool
-	err        error
+	progress   progress.Model     // Bubble Tea progress bar component
+	downloaded int64              // Current bytes downloaded
+	total      int64              // Total file size
+	startTime  time.Time          // Download start time (for speed/ETA calculation)
+	ctx        context.Context    // Context for cancellation
+	cancel     context.CancelFunc // Function to cancel download
+	done       bool               // Download completion flag
+	err        error              // Error state
 }
 
+// newDownloadModel creates a new download progress model with styled progress bar.
+// Sets up cancellation context and initializes the visual progress component.
 func newDownloadModel() downloadModel {
+	// Create cancellable context for download operation
 	ctx, cancel := context.WithCancel(context.Background())
 
+	// Configure progress bar with gradient colors (green to blue)
 	p := progress.New(
 		progress.WithGradient("#00FFAA", "#0077FF"),
 		progress.WithWidth(50),

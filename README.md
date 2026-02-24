@@ -7,7 +7,7 @@ A powerful Go application that searches for skills across Excel files using eith
 - **Interactive TUI**: Clean terminal user interface for easy configuration
 - **Dual Search Modes**:
   - **Exact Mode**: Direct text matching for precise skill searches  
-  - **Semantic Mode**: AI-powered similarity search using pre-trained word embeddings
+  - **Exact + Semantic Mode**: Combines exact matching with AI-powered similarity search using pre-trained word embeddings
 - **Concurrent Processing**: Fast parallel processing of multiple Excel files
 - **Flexible Input**: Search across any column in Excel files
 - **Automated Results**: Exports filtered results to timestamped Excel files
@@ -40,8 +40,8 @@ A powerful Go application that searches for skills across Excel files using eith
    - **Folder**: Directory containing your Excel files
    - **Column**: Name of the column to search within
    - **Skills**: Comma-separated list of skills to search for
-   - **Mode**: Choose between "exact" or "semantic" matching
-   - **Threshold** (semantic mode only): Similarity threshold (0.0-1.0)
+   - **Mode**: Choose between "exact" or "exact + semantic" matching
+   - **Threshold** (exact + semantic mode only): Similarity threshold (0.0-1.0) for the semantic part
 
 3. The application will:
    - Process all `.xlsx` files in the specified folder
@@ -55,12 +55,18 @@ Perfect for precise skill matching. Searches for exact text matches within the s
 
 **Example**: Searching for "Python" will match cells containing exactly "Python"
 
-### Semantic Mode  
-Uses pre-trained GloVe word embeddings to find semantically similar skills. Great for finding related or alternative skill descriptions.
+### Exact + Semantic Mode  
+Combines the precision of exact matching with the power of semantic similarity. First attempts exact text matching, then falls back to AI-powered similarity search for broader coverage.
 
-**Example**: Searching for "Python" might also match "Python Programming", "Python Development", or other related terms
+**How it works**:
+1. **Exact Match**: First tries to find direct text matches (same as Exact Mode)
+2. **Semantic Fallback**: If no exact match found, uses pre-trained GloVe word embeddings to find semantically similar skills
 
-**Threshold Guidelines**:
+**Example**: Searching for "Python" will match:
+- **Exact matches**: "Python" (direct match)
+- **Semantic matches**: "Python Programming", "Python Development", or other related terms (if no exact match found)
+
+**Threshold Guidelines** (for semantic part of exact + semantic mode):
 - `0.9-1.0`: Very strict, only near-identical matches
 - `0.8-0.9`: High similarity, related concepts  
 - `0.7-0.8`: Moderate similarity, broader matches
@@ -75,7 +81,7 @@ Uses pre-trained GloVe word embeddings to find semantically similar skills. Grea
 
 ## Model Information
 
-For semantic search, the application automatically downloads and uses:
+For exact + semantic search, the application automatically downloads and uses:
 - **GloVe**: Global Vectors for Word Representation
 - **Version**: 2024 WikiGiga 100d
 - **Source**: Stanford NLP
@@ -107,7 +113,7 @@ $ ./skill-matcher
 Folder: ./data/resumes
 Column: Skills  
 Skills: Python, Machine Learning, Data Science
-Mode: semantic
+Mode: exact + semantic
 Threshold: 0.8
 
 # Output:
@@ -122,13 +128,13 @@ Threshold: 0.8
 
 ## Troubleshooting
 
-**Model Download Issues**: Ensure you have a stable internet connection. The GloVe model (~400MB) is downloaded once on first semantic search.
+**Model Download Issues**: Ensure you have a stable internet connection. The GloVe model (~400MB) is downloaded once on first exact + semantic search.
 
 **Column Not Found**: Verify the exact column name in your Excel files. Column names are case-sensitive.
 
 **No Results**: Try adjusting the semantic threshold or using exact mode for debugging.
 
-**Memory Usage**: For very large datasets, the application loads word vectors into memory. Ensure adequate RAM for semantic searches.
+**Memory Usage**: For very large datasets, the application loads word vectors into memory for exact + semantic searches. Ensure adequate RAM for semantic searches.
 
 ## Contributing
 
