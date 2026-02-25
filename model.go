@@ -6,6 +6,7 @@ package main
 import (
 	"bufio"
 	"os"
+	"skillsearch/helpers"
 	"strconv"
 	"strings"
 )
@@ -96,7 +97,13 @@ func LoadModel(path string) (*Model, error) {
 //	vector := model.Embed("unknown_word")        // returns nil
 func (m *Model) Embed(text string) []float64 {
 	// Tokenize text into lowercase words
-	words := strings.Fields(strings.ToLower(text))
+	words := make([]string, 0)
+	for _, s := range strings.Split(text, ",") {
+		n := helpers.NormalizeSkill(s)
+		if n != "" {
+			words = append(words, n)
+		}
+	}
 	// Initialize output vector with model dimensions
 	vec := make([]float64, m.Dim)
 

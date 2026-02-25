@@ -1,5 +1,5 @@
 // Package main handles downloading and extracting pre-trained word embedding models.
-// Specifically designed for Stanford's GloVe (Global Vectors) word embeddings.
+// Specifically designed for Custom trained model.
 // The download process includes progress tracking via terminal UI.
 package main
 
@@ -14,11 +14,11 @@ import (
 )
 
 // Model download configuration
-const modelURL = "https://nlp.stanford.edu/data/wordvecs/glove.2024.wikigiga.100d.zip" // Stanford GloVe download URL
-const zipFile = "glove.2024.wikigiga.100d.zip"                                         // Local zip file name
+const modelURL = "https://huggingface.co/Himmijk/skill_model/resolve/main/skill_model.vec.zip" // Custom trained model
+const zipFile = "skill_model.vec.zip"                                                          // Local zip file name
 
 // targetFile will be updated when we discover the actual filename inside the zip
-var targetFile = "glove.2024.wikigiga.100d.txt" // Expected filename (may vary)
+var targetFile = "skill_model.vec" // Expected filename (may vary)
 
 // EnsureModelExists checks if the word embedding model is available locally.
 // If not found, it initiates the download process with a progress UI.
@@ -63,7 +63,7 @@ func unzipAndPrepare() error {
 }
 
 // unzip extracts a zip archive to the specified destination directory.
-// It automatically detects .txt files (word vector files) and extracts them.
+// It automatically detects .vec files (word vector files) and extracts them.
 // Updates the global targetFile variable with the actual filename found.
 func unzip(src, dest string) error {
 	// Open the zip archive for reading
@@ -79,9 +79,9 @@ func unzip(src, dest string) error {
 		fmt.Printf("  %s\n", f.Name)
 	}
 
-	// Look for any .txt file (word vectors are typically in text format)
+	// Look for any .vec file (word vectors are typically in .vec format)
 	for _, f := range r.File {
-		if filepath.Ext(f.Name) == ".txt" {
+		if filepath.Ext(f.Name) == ".vec" {
 			fmt.Printf("Extracting: %s\n", f.Name)
 
 			// Open the file within the archive
@@ -110,5 +110,5 @@ func unzip(src, dest string) error {
 		}
 	}
 
-	return fmt.Errorf("no .txt file found in zip archive")
+	return fmt.Errorf("no .vec file found in zip archive")
 }

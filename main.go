@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"log"
 	"path/filepath"
+	"skillsearch/helpers"
 	"slices"
 	"strconv"
 	"strings"
@@ -49,6 +50,13 @@ func main() {
 	// Initialize variables for search processing
 	var model *Model
 	querySkills := parseSkills(ui.skills)
+	semanticSkills := make([]string, 0)
+	for _, s := range strings.Split(ui.skills, ",") {
+		n := helpers.NormalizeSkill(s)
+		if n != "" {
+			semanticSkills = append(semanticSkills, n)
+		}
+	}
 	var queryVec []float64 // Vector representation of query skills
 	var threshold float64  // Similarity threshold for semantic matching
 
@@ -63,7 +71,7 @@ func main() {
 			log.Fatal("Failed to prepare embedding model:", err)
 		}
 
-		// Load pre-trained GloVe word embeddings
+		// Load pre-trained skill words embeddings
 		fmt.Println("Loading embedding model...")
 		model, err = LoadModel("model.vec")
 		if err != nil {
@@ -75,7 +83,7 @@ func main() {
 		fmt.Println("Computing query embedding...")
 		// Collect vectors for all query skills that have embeddings
 		var vecs [][]float64
-		for _, s := range querySkills {
+		for _, s := range semanticSkills {
 			v := model.Embed(s)
 			if v != nil {
 				vecs = append(vecs, v)
@@ -118,6 +126,7 @@ func main() {
 			rows, _ := f.GetRows(sheet)
 
 			if len(rows) == 0 {
+				fmt.Println("no rows")
 				return
 			}
 
@@ -130,6 +139,7 @@ func main() {
 			}
 
 			if colIndex == -1 {
+				fmt.Println("column not found")
 				return
 			}
 

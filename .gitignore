@@ -1,6 +1,8 @@
 # Model files (large embedding files)
 model.vec
 *.vec
+*.bin
+*.txt
 
 # Downloaded model files
 *.zip
