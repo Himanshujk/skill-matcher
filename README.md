@@ -1,266 +1,131 @@
-# Skill Matcher
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="Skill Matcher: a Go terminal app that prompts for Folder, Column, Skills, Mode and Threshold, then exports matches to a timestamped Excel file">
+</p>
 
-A powerful Go application that searches for skills across Excel files using either exact text matching or semantic similarity with word embeddings.
+Skill Matcher scans a folder of Excel files for a skill column and finds matching rows — **exact** text matches, or **exact + semantic** matches using FastText word embeddings. No web UI, no server: answer five prompts in the terminal and get back a filtered `.xlsx`.
+
+## Quickstart
+
+```bash
+go build -o skill-matcher
+./skill-matcher
+```
+
+```text
+Folder: ./data/resumes
+Column: Skills
+Skills: Python, Machine Learning, Data Science
+Mode: [1] exact  [2] exact + semantic  → 2
+Threshold: 0.8
+
+✅ Search Complete! Output written to results_20260225_181616.xlsx (23 matches found)
+```
+
+First run of `exact + semantic` mode downloads a pretrained model (`model.vec`) automatically — no setup required. Train your own only if you want it tuned to your own skill vocabulary (see [Training a custom model](#training-a-custom-model)).
 
 ## Features
 
-- **Interactive TUI**: Clean terminal user interface for easy configuration
-- **Dual Search Modes**:
-  - **Exact Mode**: Direct text matching for precise skill searches  
-  - **Exact + Semantic Mode**: Combines exact matching with AI-powered similarity search using pre-trained word embeddings
-- **Concurrent Processing**: Fast parallel processing of multiple Excel files
-- **Flexible Input**: Search across any column in Excel files
-- **Automated Results**: Exports filtered results to timestamped Excel files
-- **Skill Extraction & Training**: Built-in tools to extract skills from Excel files and train custom models
-- **Smart Skill Normalization**: Comprehensive skill aliases and version handling (e.g., "js" → "javascript", preserves "html5", "css3")
+- **Interactive TUI** — five-step prompt flow built with [Bubble Tea](https://github.com/charmbracelet/bubbletea), no flags to memorize
+- **Two search modes** — exact text matching, or exact with a semantic fallback
+- **Concurrent processing** — every `.xlsx` file in the folder is scanned in parallel
+- **Skill normalization** — 300+ built-in aliases (`js` → `javascript`) with version-aware preservation (`html5`, `vue2`)
+- **Zero-setup semantic search** — the pretrained model downloads automatically on first use
+- **Custom model training** — extract a skills corpus from your own spreadsheets and train a FastText model tuned to it
 
-## Prerequisites
+## Search modes
 
-- Go 1.25.6 or later
-- FastText (for training custom models)
+<p align="center">
+  <img src="./assets/readme/search-modes.svg" width="100%" alt="Exact mode matches skill text directly; Exact + Semantic mode falls back to FastText cosine similarity against a threshold when no exact match is found">
+</p>
+
+**Exact** — searches the column for a direct text match. Nothing else.
+
+**Exact + Semantic** — tries an exact match first, then, only where nothing matched, falls back to FastText word embeddings and keeps rows whose cosine similarity clears your threshold.
+
+| Threshold | Behavior |
+| --- | --- |
+| `0.8–1.0` | Very strict, near-identical matches only |
+| `0.7–0.8` | High similarity, closely related concepts |
+| `0.6–0.7` (recommended) | Moderate similarity, broader matches |
+| `0.5–0.6` | Loose, experimental |
+| `< 0.5` | Very loose — expect false positives |
+
+## Skill normalization
+
+<p align="center">
+  <img src="./assets/readme/normalization.svg" width="100%" alt="js normalizes to javascript, reactjs to react, golang to go, python3.9 to python; html5, vue2 and gpt4 are preserved as-is">
+</p>
+
+Aliases and version stripping live in [`helpers/skillsAlias.go`](helpers/skillsAlias.go) and [`helpers/preserveNumbers.go`](helpers/preserveNumbers.go) — edit those files to add or fix a mapping.
 
 ## Installation
 
-1. Clone or download this repository
-2. Install FastText (required for custom model training):
+1. Clone this repository.
+2. Install [FastText](https://github.com/facebookresearch/fastText) if you plan to train a custom model:
    ```bash
    git clone https://github.com/facebookresearch/fastText.git
-   cd fastText
-   make
+   cd fastText && make
    ```
-3. Install Go dependencies:
+3. Install Go dependencies and build:
    ```bash
    go mod tidy
-   ```
-4. Build the application:
-   ```bash
    go build -o skill-matcher
    ```
 
-## Usage
+## Training a custom model
 
-### Main Skill Matcher Application
+Semantic search works out of the box using an auto-downloaded pretrained model. Train your own instead if your skill vocabulary is domain-specific and the default model misses too many matches.
 
-1. Run the application:
-   ```bash
-   ./skill-matcher
-   ```
+```bash
+cd skillExtractor
+# edit the folder path in main.go to point at your Excel files
+go run main.go              # writes skills_corpus.txt
 
-2. Follow the interactive prompts to configure your search:
-   - **Folder**: Directory containing your Excel files
-   - **Column**: Name of the column to search within
-   - **Skills**: Comma-separated list of skills to search for
-   - **Mode**: Choose between "exact" or "exact + semantic" matching
-   - **Threshold** (exact + semantic mode only): Similarity threshold (0.0-1.0) for the semantic part
+cd train
+# edit the fasttext binary path in main.go — it's hardcoded to a local path
+go run main.go               # writes skill_model.vec / skill_model.bin
+```
 
-3. The application will:
-   - Process all `.xlsx` files in the specified folder
-   - Search the specified column for matching skills
-   - Export results to a timestamped Excel file (`results_YYYYMMDD_HHMMSS.xlsx`)
+Copy or rename the resulting `skill_model.vec` to `model.vec` in the directory you run `./skill-matcher` from — that's the fixed path the app loads. The generated files are gitignored (large, and specific to your data) — you regenerate them locally, you don't commit them.
 
-### Skill Extractor Tool
-
-For creating custom training data and models from your own Excel files:
-
-1. Navigate to the skill extractor:
-   ```bash
-   cd skillExtractor
-   ```
-
-2. Edit the folder path in `main.go` to point to your Excel files directory
-
-3. Run the skill extractor:
-   ```bash
-   go run main.go
-   ```
-
-4. This will generate `skills_corpus.txt` containing normalized skills from your data
-
-5. To train a custom model (requires FastText):
-   ```bash
-   cd train
-   go run main.go
-   ```
-
-   This creates `skill_model.vec` and `skill_model.bin` files for use in the main application.
-   **Note**: Model files (*.vec, *.bin, *.txt) are gitignored due to their large size.
-
-## Search Modes
-
-### Exact Mode
-Perfect for precise skill matching. Searches for exact text matches within the specified column.
-
-**Example**: Searching for "Python" will match cells containing exactly "Python"
-
-### Exact + Semantic Mode  
-Combines the precision of exact matching with the power of semantic similarity. First attempts exact text matching, then falls back to AI-powered similarity search for broader coverage.
-
-**How it works**:
-1. **Exact Match**: First tries to find direct text matches (same as Exact Mode)
-2. **Semantic Fallback**: If no exact match found, uses custom FastText word embeddings to find semantically similar skills
-
-**Example**: Searching for "Python" will match:
-- **Exact matches**: "Python" (direct match)
-- **Semantic matches**: "Python Programming", "Python Development", or other related terms (if no exact match found)
-
-**Threshold Guidelines** (for semantic part of exact + semantic mode):
-- **Recommended Range**: `0.5-0.8` (best performance for most use cases)
-- `0.8-1.0`: Very strict, only near-identical matches
-- `0.7-0.8`: High similarity, related concepts  
-- `0.6-0.7`: Moderate similarity, broader matches
-- `0.5-0.6`: Loose similarity, more experimental
-- `Below 0.5`: Very loose, may include many false positives
-
-## Skill Normalization
-
-The application includes intelligent skill normalization to handle common variations and maintain consistency:
-
-### Skill Aliases
-Automatically maps common skill variations to standard terms:
-- `js`, `node.js`, `node-js` → `nodejs`
-- `reactjs`, `react.js` → `react`
-- `golang`, `go-lang` → `go`
-- `py` → `python`
-- `ts` → `typescript`
-- `.net`, `c#` → `dotnet`, `csharp`
-- And 300+ more mappings...
-
-### Number Preservation
-Preserves important version numbers and technical terms:
-- `html5`, `css3` (preserved as-is)
-- `es6`, `es2015`, `es2020` (preserved as-is)
-- `gpt2`, `gpt3`, `gpt4` (AI models)
-- `vue2`, `vue3`, `angular2` (framework versions)
-- `python3`, `java8`, `java11` (language versions)
-
-### Version Stripping
-For skills not in the preserve list, automatically strips version numbers:
-- `python3.9` → `python`
-- `node16.14` → `nodejs`
-- `react18.2` → `react`
+Model shape: skip-gram, 150 dimensions, 8-word context window, 2–6 character n-grams, 15 epochs, 15 negative samples, learning rate 0.05.
 
 ## Dependencies
 
-- **[Bubble Tea](https://github.com/charmbracelet/bubbletea)**: Terminal UI framework
-- **[Lipgloss](https://github.com/charmbracelet/lipgloss)**: Style definitions for TUI
-- **[Excelize](https://github.com/xuri/excelize)**: Excel file processing
-- **[Bubbles](https://github.com/charmbracelet/bubbles)**: TUI components
+- [Bubble Tea](https://github.com/charmbracelet/bubbletea) — TUI framework
+- [Bubbles](https://github.com/charmbracelet/bubbles) — TUI components
+- [Lipgloss](https://github.com/charmbracelet/lipgloss) — styling
+- [Excelize](https://github.com/xuri/excelize) — Excel file I/O
 
-## Model Information
+## File structure
 
-For exact + semantic search, the application uses custom FastText models trained on your specific data:
-
-- **FastText**: Skip-gram model with character n-grams
-- **Dimensions**: 150 (configurable)
-- **Context Window**: 8 words
-- **Character N-grams**: 2-6 characters
-- **Training**: 15 epochs with negative sampling
-- **Negative Sampling**: 15 samples per positive example
-- **Learning Rate**: 0.05
-
-Custom models are stored in the `skillExtractor/train/` directory as `skill_model.vec` and `skill_model.bin` files.
-
-**Note**: Model and corpus files (*.vec, *.bin, *.txt) are not tracked in git due to their large size. You'll need to generate them locally using the skillExtractor tools.
-
-## File Structure
-
-```
+```text
 skill-matcher/
-├── main.go              # Main application entry point
-├── tui.go               # Terminal user interface
-├── search.go            # Search algorithms and similarity functions  
-├── model.go             # Word embedding model handling
-├── downloader.go        # Model download functionality
-├── downloader_tui.go    # Download progress UI
-├── index.go             # Data indexing utilities
-├── go.mod               # Go module dependencies
-├── helpers/             # Skill normalization utilities
-│   ├── skills.go        # Core normalization functions
-│   ├── skillsAlias.go   # Skill alias mappings (300+ entries)
-│   └── preserveNumbers.go # Version preservation rules
-├── skillExtractor/      # Training data extraction tools
-│   ├── main.go          # Extract skills from Excel files
-│   └── train/           # Model training utilities
-│       └── main.go      # FastText training script
-└── README.md           # This file
+├── main.go               # entry point
+├── tui.go                 # terminal prompt flow
+├── search.go               # exact + semantic search
+├── model.go                 # word embedding loading
+├── downloader.go / downloader_tui.go  # auto-downloads the pretrained model + progress UI
+├── index.go                 # gob row cache (currently unused)
+├── helpers/
+│   ├── skills.go             # normalization logic
+│   ├── skillsAlias.go          # 300+ alias mappings
+│   └── preserveNumbers.go       # version preservation rules
+└── skillExtractor/
+    ├── main.go                # corpus extraction from Excel
+    └── train/main.go            # FastText training
 ```
-
-## Example
-
-### Basic Search
-```bash
-$ ./skill-matcher
-
-# Follow prompts:
-Folder: ./data/resumes
-Column: Skills  
-Skills: Python, Machine Learning, Data Science
-Mode: exact + semantic
-Threshold: 0.8
-
-# Output:
-✅ Search Complete! Output written to results_20240224_143052.xlsx (23 matches found)
-```
-
-### Skill Extraction & Training
-```bash
-# Extract skills from your Excel files
-$ cd skillExtractor
-$ go run main.go
-Found 150 Excel files to process
-Processing complete! Generated skills_corpus.txt
-
-# Train custom model (optional)
-$ cd train
-$ go run main.go
-# Creates skill_model.vec and skill_model.bin
-```
-
-### Skill Normalization Examples
-The application automatically normalizes common skill variations:
-- Input: "js, reactjs, node.js, typescript"
-- Normalized: "javascript, react, nodejs, typescript"
-- Input: "python3.9, html5, vue2"  
-- Normalized: "python, html5, vue2" (html5 and vue2 preserved)
-
-## Performance
-
-- **Concurrent Processing**: Processes multiple Excel files simultaneously
-- **Memory Efficient**: Streams data without loading entire files into memory
-- **Progress Tracking**: Real-time progress updates during processing
 
 ## Troubleshooting
 
-**Model Not Found**: Ensure you have trained a custom model using the skillExtractor tools. The application requires `skill_model.vec` in the `skillExtractor/train/` directory for semantic search.
+**Model download fails** — semantic mode auto-downloads `model.vec` from Hugging Face on first run; check your network, or supply your own by placing a trained `model.vec` in the directory you run the app from.
 
-**Column Not Found**: Verify the exact column name in your Excel files. Column names are case-sensitive. The application searches for exact matches.
+**Column not found** — column names are case-sensitive and must match exactly.
 
-**No Results**: Try adjusting the semantic threshold or using exact mode for debugging. Check that skill names match expected patterns.
+**No results** — lower the threshold, or switch to exact mode to debug what's actually in the column.
 
-**Memory Usage**: For very large datasets, the application loads word vectors into memory for exact + semantic searches. Ensure adequate RAM for semantic searches.
-
-**Custom Model Training**: 
-- Requires FastText binary installed and accessible in PATH
-- Update the FastText path in `skillExtractor/train/main.go` if needed
-- Ensure sufficient training data in `skills_corpus.txt` (minimum 1000 skill instances recommended)
-
-**Skill Normalization Issues**: 
-- Check `helpers/skillsAlias.go` for unexpected mappings
-- Add new aliases or modify existing ones as needed
-- Verify number preservation rules in `helpers/preserveNumbers.go`
+**High memory use** — word vectors are loaded fully into memory for semantic search; make sure you have room for `model.vec`.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes  
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is open source.
-
----
-
-*Built with ❤️ using Go and modern TUI libraries*
+Fork, branch, make your change, open a PR.

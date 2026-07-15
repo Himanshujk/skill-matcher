@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="150" viewBox="0 0 1200 150"
+     role="img" aria-labelledby="norm-title norm-desc">
+  <title id="norm-title">Skill normalization</title>
+  <desc id="norm-desc">Raw skill text such as js, reactjs, python3.9 or vue2 is normalized to javascript, react, python, and vue2 (versions like html5 and vue2 are preserved).</desc>
+
+  <rect width="1200" height="150" rx="18" fill="#0d1117"/>
+  <rect x="0.75" y="0.75" width="1198.5" height="148.5" rx="17.25" fill="none" stroke="#1f2630" stroke-width="1.5"/>
+
+  <text x="56" y="38" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="13" letter-spacing="2" fill="#565f6b">SKILL NORMALIZATION &#8212; 300+ ALIASES</text>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14.5">
+    <!-- js -> javascript -->
+    <rect x="56" y="62" width="70" height="34" rx="17" fill="#161b22" stroke="#2a313c"/>
+    <text x="91" y="84" text-anchor="middle" fill="#9aa4b2">js</text>
+    <path d="M132 79 H160" stroke="#4ECDC4" stroke-width="1.5"/>
+    <polygon points="160,74.5 170,79 160,83.5" fill="#4ECDC4"/>
+    <rect x="176" y="62" width="132" height="34" rx="17" fill="#0f2d22" stroke="#96CEB4"/>
+    <text x="242" y="84" text-anchor="middle" fill="#96CEB4">javascript</text>
+
+    <!-- reactjs -> react -->
+    <rect x="344" y="62" width="100" height="34" rx="17" fill="#161b22" stroke="#2a313c"/>
+    <text x="394" y="84" text-anchor="middle" fill="#9aa4b2">reactjs</text>
+    <path d="M450 79 H478" stroke="#4ECDC4" stroke-width="1.5"/>
+    <polygon points="478,74.5 488,79 478,83.5" fill="#4ECDC4"/>
+    <rect x="494" y="62" width="94" height="34" rx="17" fill="#0f2d22" stroke="#96CEB4"/>
+    <text x="541" y="84" text-anchor="middle" fill="#96CEB4">react</text>
+
+    <!-- golang -> go -->
+    <rect x="624" y="62" width="90" height="34" rx="17" fill="#161b22" stroke="#2a313c"/>
+    <text x="669" y="84" text-anchor="middle" fill="#9aa4b2">golang</text>
+    <path d="M714 79 H742" stroke="#4ECDC4" stroke-width="1.5"/>
+    <polygon points="742,74.5 752,79 742,83.5" fill="#4ECDC4"/>
+    <rect x="758" y="62" width="66" height="34" rx="17" fill="#0f2d22" stroke="#96CEB4"/>
+    <text x="791" y="84" text-anchor="middle" fill="#96CEB4">go</text>
+
+    <!-- python3.9 -> python (version stripped) -->
+    <rect x="850" y="62" width="128" height="34" rx="17" fill="#161b22" stroke="#2a313c"/>
+    <text x="914" y="84" text-anchor="middle" fill="#9aa4b2">python3.9</text>
+    <path d="M978 79 H1006" stroke="#4ECDC4" stroke-width="1.5"/>
+    <polygon points="1006,74.5 1016,79 1006,83.5" fill="#4ECDC4"/>
+    <rect x="1032" y="62" width="112" height="34" rx="17" fill="#0f2d22" stroke="#96CEB4"/>
+    <text x="1088" y="84" text-anchor="middle" fill="#96CEB4">python</text>
+
+    <!-- preserved -->
+    <text x="56" y="128" font-size="13" fill="#565f6b">preserved as-is &#8594;</text>
+    <rect x="230" y="110" width="76" height="30" rx="15" fill="#2a2110" stroke="#FFEAA7"/>
+    <text x="268" y="130" text-anchor="middle" font-size="13" fill="#FFEAA7">html5</text>
+    <rect x="316" y="110" width="70" height="30" rx="15" fill="#2a2110" stroke="#FFEAA7"/>
+    <text x="351" y="130" text-anchor="middle" font-size="13" fill="#FFEAA7">vue2</text>
+    <rect x="396" y="110" width="70" height="30" rx="15" fill="#2a2110" stroke="#FFEAA7"/>
+    <text x="431" y="130" text-anchor="middle" font-size="13" fill="#FFEAA7">gpt4</text>
+  </g>
+</svg>

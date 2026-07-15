@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="300" viewBox="0 0 1200 300"
+     role="img" aria-labelledby="modes-title modes-desc">
+  <title id="modes-title">Exact vs. Exact + Semantic search flow</title>
+  <desc id="modes-desc">Exact mode matches skill text directly. Exact + Semantic mode tries an exact match first, then falls back to FastText cosine similarity against a threshold.</desc>
+
+  <rect width="1200" height="300" rx="22" fill="#0d1117"/>
+  <rect x="0.75" y="0.75" width="1198.5" height="298.5" rx="21.25" fill="none" stroke="#1f2630" stroke-width="1.5"/>
+
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace">
+    <text x="56" y="46" font-size="13" letter-spacing="2" fill="#565f6b">SEARCH MODES</text>
+
+    <!-- shared input -->
+    <rect x="56" y="80" width="190" height="52" rx="8" fill="#161b22" stroke="#2a313c"/>
+    <text x="151" y="111" text-anchor="middle" font-size="14" fill="#F8F8F2">"Python"</text>
+
+    <!-- Row 1: Exact -->
+    <path d="M246 106 H320" stroke="#3a4250" stroke-width="1.5" fill="none"/>
+    <polygon points="320,101 332,106 320,111" fill="#3a4250"/>
+    <rect x="332" y="80" width="230" height="52" rx="8" fill="#161b22" stroke="#4ECDC4"/>
+    <text x="447" y="102" text-anchor="middle" font-size="12" fill="#4ECDC4">EXACT TEXT MATCH</text>
+    <text x="447" y="120" text-anchor="middle" font-size="12.5" fill="#9aa4b2">cell == "Python"</text>
+
+    <path d="M562 106 H636" stroke="#3a4250" stroke-width="1.5" fill="none"/>
+    <polygon points="636,101 648,106 636,111" fill="#3a4250"/>
+    <rect x="648" y="80" width="220" height="52" rx="8" fill="#0f2d22" stroke="#96CEB4"/>
+    <text x="758" y="111" text-anchor="middle" font-size="13" fill="#96CEB4">&#10003; matched row</text>
+
+    <text x="900" y="102" font-size="13" fill="#6b7480">Mode 1</text>
+    <text x="900" y="120" font-size="13" font-weight="600" fill="#F8F8F2">exact</text>
+
+    <!-- Row 2: Exact + Semantic -->
+    <path d="M151 132 V180" stroke="#3a4250" stroke-width="1.5" fill="none"/>
+    <path d="M246 200 H320" stroke="#3a4250" stroke-width="1.5" fill="none"/>
+    <polygon points="320,195 332,200 320,205" fill="#3a4250"/>
+    <rect x="56" y="174" width="190" height="52" rx="8" fill="#161b22" stroke="#4ECDC4"/>
+    <text x="151" y="205" text-anchor="middle" font-size="12" fill="#4ECDC4">exact match?</text>
+
+    <rect x="332" y="174" width="230" height="52" rx="8" fill="#161b22" stroke="#45B7D1"/>
+    <text x="447" y="196" text-anchor="middle" font-size="12" fill="#45B7D1">FASTTEXT EMBEDDING</text>
+    <text x="447" y="214" text-anchor="middle" font-size="12.5" fill="#9aa4b2">150-dim, 2&#8211;6 char n-grams</text>
+
+    <path d="M562 200 H636" stroke="#3a4250" stroke-width="1.5" fill="none"/>
+    <polygon points="636,195 648,200 636,205" fill="#3a4250"/>
+    <rect x="648" y="174" width="220" height="52" rx="8" fill="#161b22" stroke="#FFEAA7"/>
+    <text x="758" y="196" text-anchor="middle" font-size="12" fill="#FFEAA7">cosine similarity</text>
+    <text x="758" y="214" text-anchor="middle" font-size="12.5" fill="#9aa4b2">&#8805; threshold (0.5&#8211;0.8)</text>
+
+    <path d="M868 200 H930" stroke="#3a4250" stroke-width="1.5" fill="none"/>
+    <polygon points="930,195 942,200 930,205" fill="#3a4250"/>
+    <rect x="942" y="174" width="190" height="52" rx="8" fill="#0f2d22" stroke="#96CEB4"/>
+    <text x="1037" y="205" text-anchor="middle" font-size="13" fill="#96CEB4">&#10003; matched row</text>
+
+    <text x="56" y="252" font-size="13" fill="#6b7480">Mode 2</text>
+    <text x="56" y="270" font-size="13" font-weight="600" fill="#F8F8F2">exact + semantic &#8212; falls back only when Mode 1 finds nothing</text>
+  </g>
+</svg>

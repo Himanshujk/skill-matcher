@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="400" viewBox="0 0 1200 400"
+     role="img" aria-labelledby="hero-title hero-desc">
+  <title id="hero-title">Skill Matcher</title>
+  <desc id="hero-desc">A Go terminal app that walks through Folder, Column, Skills, Mode and Threshold prompts, then exports matched rows to a timestamped Excel file.</desc>
+
+  <defs>
+    <clipPath id="term-clip">
+      <rect x="0" y="0" width="620" height="308" rx="10"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1200" height="400" rx="26" fill="#0d1117"/>
+  <rect x="0.75" y="0.75" width="1198.5" height="398.5" rx="25.25" fill="none" stroke="#1f2630" stroke-width="1.5"/>
+
+  <!-- Title block -->
+  <g transform="translate(56 64)" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <text x="0" y="0" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="15" letter-spacing="2" fill="#4ECDC4">GO · TERMINAL SKILL SEARCH</text>
+
+    <text x="0" y="58" font-size="52" font-weight="700" fill="#F8F8F2">Skill Matcher</text>
+
+    <text x="0" y="102" font-size="18" fill="#9aa4b2">Search skill columns across a folder of</text>
+    <text x="0" y="128" font-size="18" fill="#9aa4b2">Excel files &#8212; exact text, or exact with a</text>
+    <text x="0" y="154" font-size="18" fill="#9aa4b2">semantic FastText fallback.</text>
+
+    <!-- metadata row -->
+    <g transform="translate(0 196)" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14">
+      <rect x="0" y="-20" width="118" height="30" rx="15" fill="#161b22" stroke="#2a313c"/>
+      <text x="59" y="0" fill="#96CEB4" text-anchor="middle">Go 1.25.6</text>
+
+      <rect x="130" y="-20" width="150" height="30" rx="15" fill="#161b22" stroke="#2a313c"/>
+      <text x="205" y="0" fill="#45B7D1" text-anchor="middle">Bubble Tea TUI</text>
+
+      <rect x="292" y="-20" width="140" height="30" rx="15" fill="#161b22" stroke="#2a313c"/>
+      <text x="362" y="0" fill="#FF79C6" text-anchor="middle">FastText vectors</text>
+    </g>
+
+    <text x="0" y="252" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14" fill="#565f6b">./skill-matcher</text>
+    <rect x="0" y="260" width="440" height="1" fill="#1f2630"/>
+    <text x="0" y="288" font-size="14" fill="#565f6b">One binary. Five prompts. A finished spreadsheet.</text>
+  </g>
+
+  <!-- Terminal proof -->
+  <g transform="translate(524 46)">
+    <rect x="0" y="0" width="620" height="308" rx="10" fill="#161b22" stroke="#2a313c"/>
+    <rect x="0" y="0" width="620" height="34" rx="10" fill="#1a1a1a"/>
+    <rect x="0" y="24" width="620" height="10" fill="#1a1a1a"/>
+    <circle cx="22" cy="17" r="5.5" fill="#FF6B6B"/>
+    <circle cx="42" cy="17" r="5.5" fill="#FFEAA7"/>
+    <circle cx="62" cy="17" r="5.5" fill="#96CEB4"/>
+    <text x="310" y="22" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" fill="#6b7480">skill-matcher</text>
+
+    <g clip-path="url(#term-clip)" transform="translate(0 34)">
+      <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="14.5">
+        <text x="24" y="32"><tspan fill="#4ECDC4">Folder:</tspan><tspan fill="#F8F8F2"> ./data/resumes</tspan></text>
+        <text x="24" y="60"><tspan fill="#4ECDC4">Column:</tspan><tspan fill="#F8F8F2"> Skills</tspan></text>
+        <text x="24" y="88"><tspan fill="#4ECDC4">Skills:</tspan><tspan fill="#F8F8F2"> Python, Machine Learning, Data Science</tspan></text>
+        <text x="24" y="116"><tspan fill="#45B7D1">Mode:</tspan><tspan fill="#96CEB4"> [1] exact  [2] exact + semantic</tspan><tspan fill="#FFEAA7"> &#8594; 2</tspan></text>
+        <text x="24" y="144"><tspan fill="#FFEAA7">Threshold:</tspan><tspan fill="#F8F8F2"> 0.8</tspan></text>
+
+        <rect x="24" y="164" width="572" height="1" fill="#242b34"/>
+
+        <text x="24" y="196" fill="#50FA7B">&#10003; Search Complete!</text>
+        <text x="24" y="222"><tspan fill="#9aa4b2">23 matches &#8594; </tspan><tspan fill="#F8F8F2">results_20260225_181616.xlsx</tspan></text>
+
+        <rect x="24" y="244" width="9" height="16" fill="#50FA7B" opacity="0.85"/>
+      </g>
+    </g>
+  </g>
+</svg>
